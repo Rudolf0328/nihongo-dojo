@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>일본어 공부 페이지</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        color: white;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .nav-tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .tab-button {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        color: white;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .tab-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .tab-button.active {
+        background: white;
+        color: #667eea;
+        font-weight: bold;
+      }
+
+      .tab-content {
+        display: none;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        min-height: 500px;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .hiragana-grid,
+      .katakana-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .kana-card {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .kana-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-color: #667eea;
+      }
+
+      .kana-card.selected {
+        background: #667eea;
+        color: white;
+        border-color: #5a6fd8;
+      }
+
+      .kana {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .romaji {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .kana-card.selected .romaji {
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .quiz-container {
+        text-align: center;
+      }
+
+      .quiz-question {
+        font-size: 2rem;
+        margin: 30px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 5px solid #667eea;
+      }
+
+      .quiz-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 30px 0;
+      }
+
+      .quiz-option {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+      }
+
+      .quiz-option:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+      }
+
+      .quiz-option.selected {
+        background: #667eea;
+        color: white;
+        border-color: #5a6fd8;
+      }
+
+      .quiz-option.correct {
+        background: #28a745;
+        color: white;
+        border-color: #1e7e34;
+      }
+
+      .quiz-option.incorrect {
+        background: #dc3545;
+        color: white;
+        border-color: #c82333;
+      }
+
+      .quiz-controls {
+        margin: 30px 0;
+      }
+
+      .btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .score {
+        font-size: 1.2rem;
+        margin: 20px 0;
+        padding: 15px;
+        background: #e9ecef;
+        border-radius: 10px;
+      }
+
+      .kanji-practice {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .kanji-card {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .kanji-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-color: #667eea;
+      }
+
+      .kanji {
+        font-size: 3rem;
+        margin-bottom: 10px;
+      }
+
+      .kanji-info {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 10px;
+        background: #e9ecef;
+        border-radius: 5px;
+        overflow: hidden;
+        margin: 20px 0;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: width 0.3s ease;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .stat-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        border-left: 5px solid #667eea;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .stat-label {
+        color: #666;
+        margin-top: 5px;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .nav-tabs {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .tab-content {
+          padding: 20px;
+        }
+
+        .hiragana-grid,
+        .katakana-grid {
+          grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+          gap: 10px;
+        }
+
+        .kana-card {
+          padding: 15px;
+        }
+
+        .kana {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🇯🇵 일본어 공부</h1>
+        <p>히라가나, 가타카나, 한자, 단어를 재미있게 배워보세요!</p>
+      </div>
+
+      <div class="nav-tabs">
+        <button class="tab-button active" onclick="showTab('hiragana')">
+          히라가나
+        </button>
+        <button class="tab-button" onclick="showTab('katakana')">
+          가타카나
+        </button>
+        <button class="tab-button" onclick="showTab('quiz')">단어 퀴즈</button>
+        <button class="tab-button" onclick="showTab('kanji')">한자 연습</button>
+        <button class="tab-button" onclick="showTab('stats')">학습 통계</button>
+      </div>
+
+      <!-- 히라가나 탭 -->
+      <div id="hiragana" class="tab-content active">
+        <h2>히라가나 학습</h2>
+        <p>히라가나를 클릭해서 발음을 확인해보세요!</p>
+        <div class="hiragana-grid" id="hiraganaGrid"></div>
+      </div>
+
+      <!-- 가타카나 탭 -->
+      <div id="katakana" class="tab-content">
+        <h2>가타카나 학습</h2>
+        <p>가타카나를 클릭해서 발음을 확인해보세요!</p>
+        <div class="katakana-grid" id="katakanaGrid"></div>
+      </div>
+
+      <!-- 퀴즈 탭 -->
+      <div id="quiz" class="tab-content">
+        <h2>단어 퀴즈</h2>
+        <div class="quiz-container">
+          <div class="quiz-question" id="quizQuestion">
+            문제를 불러오는 중...
+          </div>
+          <div class="quiz-options" id="quizOptions"></div>
+          <div class="quiz-controls">
+            <button class="btn" onclick="nextQuestion()" id="nextBtn" disabled>
+              다음 문제
+            </button>
+            <button class="btn" onclick="checkAnswer()" id="checkBtn">
+              정답 확인
+            </button>
+          </div>
+          <div class="score" id="score">점수: 0/0</div>
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              id="progressFill"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 한자 탭 -->
+      <div id="kanji" class="tab-content">
+        <h2>한자 연습</h2>
+        <p>기본 한자를 클릭해서 읽기와 의미를 확인해보세요!</p>
+        <div class="kanji-practice" id="kanjiPractice"></div>
+      </div>
+
+      <!-- 통계 탭 -->
+      <div id="stats" class="tab-content">
+        <h2>학습 통계</h2>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number" id="totalQuestions">0</div>
+            <div class="stat-label">총 문제 수</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="correctAnswers">0</div>
+            <div class="stat-label">정답 수</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="accuracy">0%</div>
+            <div class="stat-label">정답률</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="studyTime">0분</div>
+            <div class="stat-label">학습 시간</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 히라가나 데이터
+      const hiraganaData = [
+        { kana: "あ", romaji: "a" },
+        { kana: "い", romaji: "i" },
+        { kana: "う", romaji: "u" },
+        { kana: "え", romaji: "e" },
+        { kana: "お", romaji: "o" },
+        { kana: "か", romaji: "ka" },
+        { kana: "き", romaji: "ki" },
+        { kana: "く", romaji: "ku" },
+        { kana: "け", romaji: "ke" },
+        { kana: "こ", romaji: "ko" },
+        { kana: "さ", romaji: "sa" },
+        { kana: "し", romaji: "shi" },
+        { kana: "す", romaji: "su" },
+        { kana: "せ", romaji: "se" },
+        { kana: "そ", romaji: "so" },
+        { kana: "た", romaji: "ta" },
+        { kana: "ち", romaji: "chi" },
+        { kana: "つ", romaji: "tsu" },
+        { kana: "て", romaji: "te" },
+        { kana: "と", romaji: "to" },
+        { kana: "な", romaji: "na" },
+        { kana: "に", romaji: "ni" },
+        { kana: "ぬ", romaji: "nu" },
+        { kana: "ね", romaji: "ne" },
+        { kana: "の", romaji: "no" },
+        { kana: "は", romaji: "ha" },
+        { kana: "ひ", romaji: "hi" },
+        { kana: "ふ", romaji: "fu" },
+        { kana: "へ", romaji: "he" },
+        { kana: "ほ", romaji: "ho" },
+        { kana: "ま", romaji: "ma" },
+        { kana: "み", romaji: "mi" },
+        { kana: "む", romaji: "mu" },
+        { kana: "め", romaji: "me" },
+        { kana: "も", romaji: "mo" },
+        { kana: "や", romaji: "ya" },
+        { kana: "ゆ", romaji: "yu" },
+        { kana: "よ", romaji: "yo" },
+        { kana: "ら", romaji: "ra" },
+        { kana: "り", romaji: "ri" },
+        { kana: "る", romaji: "ru" },
+        { kana: "れ", romaji: "re" },
+        { kana: "ろ", romaji: "ro" },
+        { kana: "わ", romaji: "wa" },
+        { kana: "を", romaji: "wo" },
+        { kana: "ん", romaji: "n" },
+      ];
+
+      // 가타카나 데이터
+      const katakanaData = [
+        { kana: "ア", romaji: "a" },
+        { kana: "イ", romaji: "i" },
+        { kana: "ウ", romaji: "u" },
+        { kana: "エ", romaji: "e" },
+        { kana: "オ", romaji: "o" },
+        { kana: "カ", romaji: "ka" },
+        { kana: "キ", romaji: "ki" },
+        { kana: "ク", romaji: "ku" },
+        { kana: "ケ", romaji: "ke" },
+        { kana: "コ", romaji: "ko" },
+        { kana: "サ", romaji: "sa" },
+        { kana: "シ", romaji: "shi" },
+        { kana: "ス", romaji: "su" },
+        { kana: "セ", romaji: "se" },
+        { kana: "ソ", romaji: "so" },
+        { kana: "タ", romaji: "ta" },
+        { kana: "チ", romaji: "chi" },
+        { kana: "ツ", romaji: "tsu" },
+        { kana: "テ", romaji: "te" },
+        { kana: "ト", romaji: "to" },
+        { kana: "ナ", romaji: "na" },
+        { kana: "ニ", romaji: "ni" },
+        { kana: "ヌ", romaji: "nu" },
+        { kana: "ネ", romaji: "ne" },
+        { kana: "ノ", romaji: "no" },
+        { kana: "ハ", romaji: "ha" },
+        { kana: "ヒ", romaji: "hi" },
+        { kana: "フ", romaji: "fu" },
+        { kana: "ヘ", romaji: "he" },
+        { kana: "ホ", romaji: "ho" },
+        { kana: "マ", romaji: "ma" },
+        { kana: "ミ", romaji: "mi" },
+        { kana: "ム", romaji: "mu" },
+        { kana: "メ", romaji: "me" },
+        { kana: "モ", romaji: "mo" },
+        { kana: "ヤ", romaji: "ya" },
+        { kana: "ユ", romaji: "yu" },
+        { kana: "ヨ", romaji: "yo" },
+        { kana: "ラ", romaji: "ra" },
+        { kana: "リ", romaji: "ri" },
+        { kana: "ル", romaji: "ru" },
+        { kana: "レ", romaji: "re" },
+        { kana: "ロ", romaji: "ro" },
+        { kana: "ワ", romaji: "wa" },
+        { kana: "ヲ", romaji: "wo" },
+        { kana: "ン", romaji: "n" },
+      ];
+
+      // 한자 데이터
+      const kanjiData = [
+        { kanji: "一", reading: "いち", meaning: "하나" },
+        { kanji: "二", reading: "に", meaning: "둘" },
+        { kanji: "三", reading: "さん", meaning: "셋" },
+        { kanji: "四", reading: "よん/し", meaning: "넷" },
+        { kanji: "五", reading: "ご", meaning: "다섯" },
+        { kanji: "六", reading: "ろく", meaning: "여섯" },
+        { kanji: "七", reading: "なな/しち", meaning: "일곱" },
+        { kanji: "八", reading: "はち", meaning: "여덟" },
+        { kanji: "九", reading: "きゅう/く", meaning: "아홉" },
+        { kanji: "十", reading: "じゅう", meaning: "열" },
+        { kanji: "人", reading: "ひと/じん", meaning: "사람" },
+        { kanji: "大", reading: "おお/だい", meaning: "크다" },
+        { kanji: "小", reading: "ちい/しょう", meaning: "작다" },
+        { kanji: "山", reading: "やま", meaning: "산" },
+        { kanji: "川", reading: "かわ", meaning: "강" },
+        { kanji: "日", reading: "ひ/にち", meaning: "날/태양" },
+        { kanji: "月", reading: "つき/がつ", meaning: "달/월" },
+        { kanji: "火", reading: "ひ", meaning: "불" },
+        { kanji: "水", reading: "みず", meaning: "물" },
+        { kanji: "木", reading: "き", meaning: "나무" },
+      ];
+
+      // 퀴즈 데이터
+      const quizData = [
+        {
+          question: "こんにちは",
+          options: ["안녕하세요", "감사합니다", "죄송합니다", "안녕히가세요"],
+          correct: 0,
+        },
+        {
+          question: "ありがとう",
+          options: ["안녕하세요", "감사합니다", "죄송합니다", "안녕히가세요"],
+          correct: 1,
+        },
+        {
+          question: "すみません",
+          options: ["안녕하세요", "감사합니다", "죄송합니다", "안녕히가세요"],
+          correct: 2,
+        },
+        {
+          question: "さようなら",
+          options: ["안녕하세요", "감사합니다", "죄송합니다", "안녕히가세요"],
+          correct: 3,
+        },
+        {
+          question: "おはよう",
+          options: ["좋은 아침", "안녕하세요", "안녕히가세요", "감사합니다"],
+          correct: 0,
+        },
+        {
+          question: "こんばんは",
+          options: ["좋은 아침", "안녕하세요", "좋은 저녁", "감사합니다"],
+          correct: 2,
+        },
+        {
+          question: "はい",
+          options: ["아니요", "네", "모르겠어요", "죄송해요"],
+          correct: 1,
+        },
+        {
+          question: "いいえ",
+          options: ["아니요", "네", "모르겠어요", "죄송해요"],
+          correct: 0,
+        },
+        {
+          question: "わたし",
+          options: ["당신", "나", "우리", "그들"],
+          correct: 1,
+        },
+        {
+          question: "あなた",
+          options: ["당신", "나", "우리", "그들"],
+          correct: 0,
+        },
+      ];
+
+      // 전역 변수
+      let currentTab = "hiragana";
+      let currentQuestion = 0;
+      let selectedAnswer = -1;
+      let correctAnswers = 0;
+      let totalQuestions = 0;
+      let startTime = Date.now();
+
+      // 탭 전환
+      function showTab(tabName) {
+        // 모든 탭 숨기기
+        document.querySelectorAll(".tab-content").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+        document.querySelectorAll(".tab-button").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        // 선택된 탭 보이기
+        document.getElementById(tabName).classList.add("active");
+        event.target.classList.add("active");
+        currentTab = tabName;
+
+        // 탭별 초기화
+        if (tabName === "quiz") {
+          initQuiz();
+        } else if (tabName === "stats") {
+          updateStats();
+        }
+      }
+
+      // 히라가나 그리드 생성
+      function createHiraganaGrid() {
+        const grid = document.getElementById("hiraganaGrid");
+        hiraganaData.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "kana-card";
+          card.innerHTML = `
+                    <div class="kana">${item.kana}</div>
+                    <div class="romaji">${item.romaji}</div>
+                `;
+          card.onclick = () => {
+            // 선택 상태 토글
+            card.classList.toggle("selected");
+            // 발음 재생 (간단한 알림으로 대체)
+            alert(`${item.kana}는 "${item.romaji}"로 읽습니다.`);
+          };
+          grid.appendChild(card);
+        });
+      }
+
+      // 가타카나 그리드 생성
+      function createKatakanaGrid() {
+        const grid = document.getElementById("katakanaGrid");
+        katakanaData.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "kana-card";
+          card.innerHTML = `
+                    <div class="kana">${item.kana}</div>
+                    <div class="romaji">${item.romaji}</div>
+                `;
+          card.onclick = () => {
+            card.classList.toggle("selected");
+            alert(`${item.kana}는 "${item.romaji}"로 읽습니다.`);
+          };
+          grid.appendChild(card);
+        });
+      }
+
+      // 한자 연습 생성
+      function createKanjiPractice() {
+        const container = document.getElementById("kanjiPractice");
+        kanjiData.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "kanji-card";
+          card.innerHTML = `
+                    <div class="kanji">${item.kanji}</div>
+                    <div class="kanji-info">
+                        <div>읽기: ${item.reading}</div>
+                        <div>의미: ${item.meaning}</div>
+                    </div>
+                `;
+          card.onclick = () => {
+            alert(
+              `한자: ${item.kanji}\n읽기: ${item.reading}\n의미: ${item.meaning}`
+            );
+          };
+          container.appendChild(card);
+        });
+      }
+
+      // 퀴즈 초기화
+      function initQuiz() {
+        currentQuestion = 0;
+        correctAnswers = 0;
+        totalQuestions = quizData.length;
+        selectedAnswer = -1;
+        showQuestion();
+      }
+
+      // 문제 표시
+      function showQuestion() {
+        const question = quizData[currentQuestion];
+        document.getElementById("quizQuestion").textContent = question.question;
+
+        const optionsContainer = document.getElementById("quizOptions");
+        optionsContainer.innerHTML = "";
+
+        question.options.forEach((option, index) => {
+          const optionElement = document.createElement("div");
+          optionElement.className = "quiz-option";
+          optionElement.textContent = option;
+          optionElement.onclick = () => selectAnswer(index);
+          optionsContainer.appendChild(optionElement);
+        });
+
+        document.getElementById("nextBtn").disabled = true;
+        document.getElementById("checkBtn").disabled = false;
+        updateScore();
+        updateProgress();
+      }
+
+      // 답 선택
+      function selectAnswer(index) {
+        selectedAnswer = index;
+        document.querySelectorAll(".quiz-option").forEach((option, i) => {
+          option.classList.remove("selected");
+          if (i === index) {
+            option.classList.add("selected");
+          }
+        });
+        document.getElementById("checkBtn").disabled = false;
+      }
+
+      // 정답 확인
+      function checkAnswer() {
+        if (selectedAnswer === -1) return;
+
+        const question = quizData[currentQuestion];
+        const options = document.querySelectorAll(".quiz-option");
+
+        options.forEach((option, index) => {
+          option.classList.remove("correct", "incorrect");
+          if (index === question.correct) {
+            option.classList.add("correct");
+          } else if (index === selectedAnswer && index !== question.correct) {
+            option.classList.add("incorrect");
+          }
+        });
+
+        if (selectedAnswer === question.correct) {
+          correctAnswers++;
+        }
+
+        document.getElementById("checkBtn").disabled = true;
+        document.getElementById("nextBtn").disabled = false;
+        updateScore();
+      }
+
+      // 다음 문제
+      function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion >= quizData.length) {
+          alert(
+            `퀴즈 완료! 총 ${totalQuestions}문제 중 ${correctAnswers}문제를 맞췄습니다. (정답률: ${Math.round(
+              (correctAnswers / totalQuestions) * 100
+            )}%)`
+          );
+          initQuiz();
+        } else {
+          showQuestion();
+        }
+      }
+
+      // 점수 업데이트
+      function updateScore() {
+        document.getElementById(
+          "score"
+        ).textContent = `점수: ${correctAnswers}/${totalQuestions}`;
+      }
+
+      // 진행률 업데이트
+      function updateProgress() {
+        const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+        document.getElementById("progressFill").style.width = progress + "%";
+      }
+
+      // 통계 업데이트
+      function updateStats() {
+        const studyTime = Math.floor((Date.now() - startTime) / 60000);
+        const accuracy =
+          totalQuestions > 0
+            ? Math.round((correctAnswers / totalQuestions) * 100)
+            : 0;
+
+        document.getElementById("totalQuestions").textContent = totalQuestions;
+        document.getElementById("correctAnswers").textContent = correctAnswers;
+        document.getElementById("accuracy").textContent = accuracy + "%";
+        document.getElementById("studyTime").textContent = studyTime + "분";
+      }
+
+      // 페이지 로드 시 초기화
+      window.onload = function () {
+        createHiraganaGrid();
+        createKatakanaGrid();
+        createKanjiPractice();
+        initQuiz();
+      };
+    </script>
+  </body>
+</html>
